@@ -10,6 +10,7 @@ import (
 
 	"github.com/malashin/dds"
 	"github.com/sergeymakinen/go-bmp"
+	"github.com/xackery/engine/texture"
 	"github.com/xackery/quail/pfs"
 
 	"github.com/xackery/quail/common"
@@ -45,15 +46,15 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 
 			newMat, ok := mats[mat.Name]
 			if !ok {
-				newMat = material.NewStandard(math32.NewColor("gray"))
-				matIndexes[mat.Name] = len(mats)
+				gidx := len(mats)
+				colors := []string{"red", "green", "blue", "yellow", "cyan", "magenta", "white", "pink"}
+				newMat = material.NewStandard(math32.NewColor(colors[gidx]))
+				matIndexes[mat.Name] = gidx
 				mats[mat.Name] = newMat
+				fmt.Println("adding mat", mat.Name, gidx)
 			}
-
-			if img != nil {
-
-			}
-			//newMat.AddTexture(texture.NewTexture2DFromRGBA(img))
+			// Add texture to material group
+			newMat.AddTexture(texture.NewTexture2DFromRGBA(img))
 		}
 
 	}
@@ -75,9 +76,22 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 	lastIndex := 0
 	for i := 0; i < len(in.Triangles); i++ {
 		indices.Append(uint32(in.Triangles[i].Index.X), uint32(in.Triangles[i].Index.Y), uint32(in.Triangles[i].Index.Z))
+		if lastMat == "" {
+			lastMat = in.Triangles[i].MaterialName
+			continue
+		}
+		if lastMat == in.Triangles[i].MaterialName {
+			continue
+		}
+
+		fmt.Println("adding group", lastIndex, i-lastIndex, matIndexes[lastMat], in.Triangles[i].MaterialName)
 		geom.AddGroup(lastIndex, i-lastIndex, matIndexes[lastMat])
 		lastMat = in.Triangles[i].MaterialName
 		lastIndex = i
+	}
+	if lastIndex != len(in.Triangles) {
+		fmt.Println("adding group", lastIndex, len(in.Triangles)-lastIndex, matIndexes[lastMat])
+		geom.AddGroup(lastIndex, len(in.Triangles)-lastIndex, matIndexes[lastMat])
 	}
 
 	geom.SetIndices(indices)
