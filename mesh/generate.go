@@ -14,11 +14,11 @@ import (
 
 	"github.com/xackery/quail/common"
 
-	"github.com/g3n/engine/geometry"
-	"github.com/g3n/engine/gls"
-	"github.com/g3n/engine/graphic"
-	"github.com/g3n/engine/material"
-	"github.com/g3n/engine/math32"
+	"github.com/xackery/engine/geometry"
+	"github.com/xackery/engine/gls"
+	"github.com/xackery/engine/graphic"
+	"github.com/xackery/engine/material"
+	"github.com/xackery/engine/math32"
 )
 
 func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {

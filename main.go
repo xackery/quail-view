@@ -11,16 +11,16 @@ import (
 	"github.com/xackery/quail-view/mesh"
 	"github.com/xackery/quail/quail"
 
-	"github.com/g3n/engine/app"
-	"github.com/g3n/engine/camera"
-	"github.com/g3n/engine/core"
-	"github.com/g3n/engine/gls"
-	"github.com/g3n/engine/gui"
-	"github.com/g3n/engine/light"
-	"github.com/g3n/engine/math32"
-	"github.com/g3n/engine/renderer"
-	"github.com/g3n/engine/util/helper"
-	"github.com/g3n/engine/window"
+	"github.com/xackery/engine/app"
+	"github.com/xackery/engine/camera"
+	"github.com/xackery/engine/core"
+	"github.com/xackery/engine/gls"
+	"github.com/xackery/engine/gui"
+	"github.com/xackery/engine/light"
+	"github.com/xackery/engine/math32"
+	"github.com/xackery/engine/renderer"
+	"github.com/xackery/engine/util/helper"
+	"github.com/xackery/engine/window"
 )
 
 var (
@@ -45,7 +45,7 @@ func run() error {
 	path := os.Args[1]
 
 	// Create application and scene
-	a := app.App()
+	a := app.App(600, 600, fmt.Sprintf("quail-view v%s - %s", Version, filepath.Base(path)))
 
 	scene := core.NewNode()
 
@@ -113,7 +113,7 @@ func run() error {
 	// Set background color to black
 	a.Gls().ClearColor(0, 0, 0, 1)
 
-	a.IWindow.(*window.GlfwWindow).SetTitle(fmt.Sprintf("quail-view v%s - %s", Version, filepath.Base(path)))
+	//a.IWindow.(*window.GlfwWindow).SetTitle(fmt.Sprintf("quail-view v%s - %s", Version, filepath.Base(path)))
 
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {

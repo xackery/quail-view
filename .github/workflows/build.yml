@@ -19,6 +19,6 @@ jobs:
           prerelease: true
           title: "${{env.VERSION}}"
           files: |
-            bin/quail-linux
-            bin/quail.exe
-            bin/quail-darwin
+            bin/quail-view
+            bin/quail-view.exe
+            bin/quail-view-darwin
