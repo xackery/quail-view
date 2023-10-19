@@ -113,7 +113,7 @@ func run() error {
 	// Set background color to black
 	a.Gls().ClearColor(0, 0, 0, 1)
 
-	a.IWindow.(*window.GlfwWindow).SetTitle(fmt.Sprintf("quail-view v%s", Version))
+	a.IWindow.(*window.GlfwWindow).SetTitle(fmt.Sprintf("quail-view v%s - %s", Version, filepath.Base(path)))
 
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
