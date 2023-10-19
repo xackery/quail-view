@@ -10,7 +10,7 @@ build:
 # run program
 run:
 	@echo "run: running..."
-	go run main.go
+	go run main.go ../eq/dbx.eqg
 
 # bundle program with windows icon
 bundle:

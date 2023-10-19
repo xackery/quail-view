@@ -25,7 +25,7 @@ import (
 
 var (
 	// Version is the application version
-	Version = "dev"
+	Version = "0.0.0"
 )
 
 func main() {
@@ -112,6 +112,8 @@ func run() error {
 
 	// Set background color to black
 	a.Gls().ClearColor(0, 0, 0, 1)
+
+	a.IWindow.(*window.GlfwWindow).SetTitle(fmt.Sprintf("quail-view v%s", Version))
 
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
