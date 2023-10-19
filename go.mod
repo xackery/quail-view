@@ -1,6 +1,6 @@
 module github.com/xackery/quail-view
 
-go 1.21.3
+go 1.21
 
 require (
 	github.com/g3n/engine v0.2.0
