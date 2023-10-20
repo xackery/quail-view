@@ -44,17 +44,20 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 				return nil, fmt.Errorf("generate image: %w", err)
 			}
 
-			newMat, ok := mats[mat.Name]
-			if !ok {
-				gidx := len(mats)
-				colors := []string{"red", "green", "blue", "yellow", "cyan", "magenta", "white", "pink"}
-				newMat = material.NewStandard(math32.NewColor(colors[gidx]))
-				matIndexes[mat.Name] = gidx
-				mats[mat.Name] = newMat
-				fmt.Println("adding mat", mat.Name, gidx)
+			_, ok := mats[mat.Name]
+			if ok {
+				continue
 			}
+			gidx := len(mats)
+			colors := []string{"red", "green", "blue", "yellow", "cyan", "magenta", "white", "pink"}
+			newMat := material.NewStandard(math32.NewColor(colors[gidx]))
+			matIndexes[mat.Name] = gidx
+			mats[mat.Name] = newMat
+			fmt.Println("adding mat", mat.Name, gidx)
 			// Add texture to material group
-			newMat.AddTexture(texture.NewTexture2DFromRGBA(img))
+			if img == nil {
+				newMat.AddTexture(texture.NewTexture2DFromRGBA(img))
+			}
 		}
 
 	}
@@ -85,13 +88,14 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 		}
 
 		fmt.Println("adding group", lastIndex, i-lastIndex, matIndexes[lastMat], in.Triangles[i].MaterialName)
-		geom.AddGroup(lastIndex, i-lastIndex, matIndexes[lastMat])
+		geom.AddGroup(lastIndex, i-lastIndex, 0)
 		lastMat = in.Triangles[i].MaterialName
 		lastIndex = i
 	}
 	if lastIndex != len(in.Triangles) {
 		fmt.Println("adding group", lastIndex, len(in.Triangles)-lastIndex, matIndexes[lastMat])
-		geom.AddGroup(lastIndex, len(in.Triangles)-lastIndex, matIndexes[lastMat])
+		geom.AddGroup(lastIndex, len(in.Triangles)-lastIndex, 0)
+
 	}
 
 	geom.SetIndices(indices)
@@ -101,9 +105,9 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 
 	//mat := material.NewStandard(math32.NewColor("DarkBlue"))
 	mesh := graphic.NewMesh(geom, nil)
-
 	for name, idx := range matIndexes {
 		mesh.AddGroupMaterial(mats[name], idx)
+		break
 	}
 
 	fmt.Printf("%d total materials, %d triangles\n", len(matIndexes), len(in.Triangles))
