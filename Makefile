@@ -11,6 +11,13 @@ build:
 run:
 	@echo "run: running..."
 	go run main.go ../eq/dbx.eqg
+	#go run . ../eq/it13968.eqg
+	#go run . ../eq/luc.eqg
+	#go run . ../eq/crushbone.s3d
+	#go run . ../eq/gequip5.s3d
+	#go run . ../eq/wrm.eqg
+	#go run . ../eq/steamfontmts.eqg
+	#go run . ../eq/global5_chr.s3d
 
 # bundle program with windows icon
 bundle:

@@ -4,12 +4,15 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/draw"
 	"image/png"
 	"path/filepath"
 	"strings"
 
 	"github.com/malashin/dds"
 	"github.com/sergeymakinen/go-bmp"
+	"github.com/xackery/colors"
+	"github.com/xackery/engine/texture"
 	"github.com/xackery/quail/pfs"
 
 	"github.com/xackery/quail/common"
@@ -21,6 +24,10 @@ import (
 	"github.com/xackery/engine/math32"
 )
 
+var (
+	fallbackImg *image.RGBA
+)
+
 func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 	mats := make(map[string]*material.Standard)
 	matIndexes := make(map[string]int)
@@ -30,14 +37,18 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 			if property.Category != 2 {
 				continue
 			}
+
 			if !strings.Contains(strings.ToLower(property.Name), "texture") {
 				continue
 			}
+			fmt.Println("texture:", property.Value)
 			data, err := archive.File(property.Value)
 			if err != nil {
+				fmt.Println("Failed to load texture:", property.Value, err)
 				continue
 				//return nil, fmt.Errorf("file %s: %w", property.Value, err)
 			}
+
 			img, err := generateImage(property.Value, data)
 			if err != nil {
 				return nil, fmt.Errorf("generate image: %w", err)
@@ -50,12 +61,8 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 				mats[mat.Name] = newMat
 			}
 
-			if img != nil {
-
-			}
-			//newMat.AddTexture(texture.NewTexture2DFromRGBA(img))
+			newMat.AddTexture(texture.NewTexture2DFromRGBA(img))
 		}
-
 	}
 
 	geom := geometry.NewGeometry()
@@ -92,23 +99,27 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 		mesh.AddGroupMaterial(mats[name], idx)
 	}
 
-	fmt.Printf("%d total materials, %d triangles\n", len(matIndexes), len(in.Triangles))
+	//fmt.Printf("%d total materials, %d triangles\n", len(matIndexes), len(in.Triangles))
 
 	return mesh, nil
 }
 
 func generateImage(name string, data []byte) (*image.RGBA, error) {
+
 	if string(data[0:3]) == "DDS" {
 		// change to png, blender doesn't like EQ dds
 		img, err := dds.Decode(bytes.NewReader(data))
 		if err != nil {
-			return nil, fmt.Errorf("dds decode: %w", err)
+			fmt.Println("Failed to decode dds:", name, err, "fallback pink image")
+			return fallback(), nil
 		}
 		switch rgba := img.(type) {
 		case *image.RGBA:
 			return rgba, nil
 		case *image.NRGBA:
-			return image.NewRGBA(rgba.Rect), nil
+			newImg := image.NewRGBA(rgba.Rect)
+			draw.Draw(newImg, newImg.Bounds(), rgba, rgba.Rect.Min, draw.Src)
+			return newImg, nil
 		default:
 			return nil, fmt.Errorf("unknown dds type %T", rgba)
 		}
@@ -117,7 +128,8 @@ func generateImage(name string, data []byte) (*image.RGBA, error) {
 	if filepath.Ext(strings.ToLower(name)) == ".png" {
 		img, err := png.Decode(bytes.NewReader(data))
 		if err != nil {
-			return nil, fmt.Errorf("png decode: %w", err)
+			fmt.Println("Failed to decode png:", name, err, "fallback pink image")
+			return fallback(), nil
 		}
 		switch rgba := img.(type) {
 		case *image.RGBA:
@@ -133,7 +145,8 @@ func generateImage(name string, data []byte) (*image.RGBA, error) {
 
 		img, err := bmp.Decode(bytes.NewReader(data))
 		if err != nil {
-			return nil, fmt.Errorf("bmp decode: %w", err)
+			fmt.Println("Failed to decode bmp:", name, err, "fallback pink image")
+			return fallback(), nil
 		}
 		switch rgba := img.(type) {
 		case *image.RGBA:
@@ -141,8 +154,26 @@ func generateImage(name string, data []byte) (*image.RGBA, error) {
 		case *image.NRGBA:
 			return image.NewRGBA(rgba.Rect), nil
 		default:
-			return nil, fmt.Errorf("unknown dds type %T", rgba)
+			fmt.Println("Failed dds type", rgba, "fallback pink image")
+			return fallback(), nil
 		}
 	}
 	return nil, fmt.Errorf("unknown image type %s", name)
+}
+
+func fallback() *image.RGBA {
+	if fallbackImg != nil {
+		return fallbackImg
+	}
+	var img image.Image
+	img = image.NewRGBA(image.Rect(0, 0, 64, 64))
+	dimg := img.(draw.Image)
+
+	for x := 0; x < 64; x++ {
+		for y := 0; y < 64; y++ {
+			dimg.Set(x, y, colors.Magenta)
+		}
+	}
+	fallbackImg = img.(*image.RGBA)
+	return fallbackImg
 }
