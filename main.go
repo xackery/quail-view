@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/xackery/quail-view/anim"
+	"github.com/xackery/quail-view/skeleton"
 
 	"github.com/xackery/quail-view/mesh"
 
@@ -110,7 +111,7 @@ func run() error {
 
 		meshInstance = mesh
 
-		/*if len(model.Bones) > 0 {
+		if len(model.Bones) > 0 {
 			skel, err := skeleton.Generate(q.Models[i].Bones)
 			if err != nil {
 				return fmt.Errorf("generate skeleton: %w", err)
@@ -120,7 +121,7 @@ func run() error {
 			rigMesh.SetSkeleton(skel)
 			meshInstance = rigMesh
 			riggedMeshes = append(riggedMeshes, rigMesh)
-		}*/
+		}
 
 		meshWidth := float64(mesh.BoundingBox().Max.X) * 2
 		if float64(mesh.BoundingBox().Max.Y)*2 > meshWidth {
@@ -134,9 +135,11 @@ func run() error {
 			maxWidth = meshWidth
 		}
 
-		scene.Add(meshInstance)
+		node := scene.Add(meshInstance)
+		node.SetName(model.Header.Name)
 	}
 
+	fmt.Println("total rigged meshes:", len(riggedMeshes))
 	anims, err := anim.Generate(q.Animations, riggedMeshes)
 	if err != nil {
 		return fmt.Errorf("generate anim: %w", err)
@@ -160,15 +163,41 @@ func run() error {
 	pointLight.SetPosition(0, float32(maxWidth/2), 0)
 	scene.Add(pointLight)
 
+	dir1 := light.NewDirectional(&math32.Color{R: 1, G: 1, B: 1}, 1.0)
+	dir1.SetPosition(0, 5, 10)
+	scene.Add(dir1)
+
 	// Create and add an axis helper to the scene
 	scene.Add(helper.NewAxes(0.5))
 
 	a.Gls().ClearColor(0.2, 0.2, 0.2, 1)
 
-	//a.IWindow.(*window.GlfwWindow).SetTitle(fmt.Sprintf("quail-view v%s - %s", Version, filepath.Base(path)))
+	/*
+		panel := gui.NewPanel(150, 30)
+		panel.SetColor4(&gui.StyleDefault().Scroller.BgColor)
+		panel.SetLayoutParams(&gui.DockLayoutParams{Edge: gui.DockCenter})
+		panel.SetRenderable(true)
+		panel.SetEnabled(true)
+		scene.Add(panel)
+		//gui.Manager().Set(panel)
 
-	// shader
-	//a.Renderer().AddShader("normal", shader.Normal)
+		mbOption := gui.NewLabel("Layer: ")
+		mbOption.SetPosition(80, 10)
+		mbOption.SetPaddings(2, 2, 2, 2)
+		mbOption.SetBorders(1, 1, 1, 1)
+		panel.Add(mbOption)
+
+		mb := gui.NewMenuBar()
+		mb.SetPosition(10, 10)
+		layerMenu := gui.NewMenu()
+		layerMenu.AddOption("Layer 0").SetId("layer0")
+		layerMenu.AddOption("Layer 1").SetId("layer1")
+		layerMenu.AddOption("Layer 2").SetId("layer2")
+		mb.AddMenu("Layer", layerMenu)
+		panel.Add(mb)
+	*/
+
+	//a.IWindow.(*window.GlfwWindow).SetTitle(fmt.Sprintf("quail-view v%s - %s", Version, filepath.Base(path)))
 
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {

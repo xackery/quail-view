@@ -10,13 +10,15 @@ import (
 func Generate(in []*common.Animation, meshes []*graphic.RiggedMesh) ([]*animation.Animation, error) {
 	anims := make([]*animation.Animation, 0)
 
-	for _, entry := range in {
-		for _, boneAnim := range entry.Bones {
-			for _, mesh := range meshes {
-
+	for _, mesh := range meshes {
+		for _, entry := range in {
+			//fmt.Println("anim:", entry.Header.Name)
+			for _, boneAnim := range entry.Bones {
 				anim := animation.NewAnimation()
-				anim.SetName(entry.Name)
+				anim.SetName(entry.Header.Name)
 				anim.SetLoop(true)
+				anim.SetPaused(false)
+				anim.SetSpeed(1)
 				var keyframes math32.ArrayF32
 				var posValues math32.ArrayF32
 				var rotValues math32.ArrayF32

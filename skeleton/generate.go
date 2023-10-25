@@ -15,14 +15,18 @@ type jointEntry struct {
 	bone  common.Bone
 }
 
+var (
+	joints []*jointEntry
+)
+
 func Generate(in []common.Bone) (*graphic.Skeleton, error) {
 	skel := graphic.NewSkeleton()
 
-	joints := make([]*jointEntry, 0)
+	joints = make([]*jointEntry, 0)
 
 	rootBone := core.NewNode()
 	rootBone.SetName("root")
-	traverse(in, joints, rootBone, in[0])
+	traverse(in, rootBone, in[0])
 
 	sort.Slice(joints, func(i, j int) bool {
 		return joints[i].index < joints[j].index
@@ -54,7 +58,7 @@ func Generate(in []common.Bone) (*graphic.Skeleton, error) {
 	return skel, nil
 }
 
-func traverse(bones []common.Bone, joints []*jointEntry, ptr *core.Node, focus common.Bone) {
+func traverse(bones []common.Bone, ptr *core.Node, focus common.Bone) {
 	if focus.ChildrenCount > 0 {
 		child := bones[focus.ChildIndex]
 		childNode := core.NewNode()
@@ -67,7 +71,7 @@ func traverse(bones []common.Bone, joints []*jointEntry, ptr *core.Node, focus c
 			bone:  child,
 		}
 		joints = append(joints, je)
-		traverse(bones, joints, childNode, child)
+		traverse(bones, childNode, child)
 	}
 
 	if focus.Next > -1 {
@@ -81,6 +85,6 @@ func traverse(bones []common.Bone, joints []*jointEntry, ptr *core.Node, focus c
 			bone:  next,
 		}
 		joints = append(joints, je)
-		traverse(bones, joints, nextNode, next)
+		traverse(bones, nextNode, next)
 	}
 }

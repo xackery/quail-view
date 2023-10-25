@@ -33,6 +33,15 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 	matIndexes := make(map[string]int)
 
 	for _, mat := range in.Materials {
+		newMat, ok := mats[mat.Name]
+		if !ok {
+			newMat = material.NewStandard(math32.NewColor("gray"))
+			//newMat.SetShader("MaxCB1")
+			//newMat.SetShader("MPLBasic")
+			matIndexes[mat.Name] = len(mats)
+			mats[mat.Name] = newMat
+		}
+
 		for _, property := range mat.Properties {
 			if property.Category != 2 {
 				continue
@@ -41,7 +50,7 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 			if !strings.Contains(strings.ToLower(property.Name), "texture") {
 				continue
 			}
-			fmt.Println("texture:", property.Value)
+			//fmt.Println("texture:", property.Value)
 			data, err := archive.File(property.Value)
 			if err != nil {
 				fmt.Println("Failed to load texture:", property.Value, err)
@@ -52,13 +61,6 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 			img, err := generateImage(property.Value, data)
 			if err != nil {
 				return nil, fmt.Errorf("generate image: %w", err)
-			}
-
-			newMat, ok := mats[mat.Name]
-			if !ok {
-				newMat = material.NewStandard(math32.NewColor("gray"))
-				matIndexes[mat.Name] = len(mats)
-				mats[mat.Name] = newMat
 			}
 
 			newMat.AddTexture(texture.NewTexture2DFromRGBA(img))
