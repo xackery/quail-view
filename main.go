@@ -11,8 +11,6 @@ import (
 
 	"github.com/xackery/quail-view/mesh"
 
-	"github.com/xackery/quail/pfs"
-
 	"github.com/xackery/quail/quail"
 
 	"github.com/xackery/engine/app"
@@ -91,18 +89,13 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("eqg import: %w", err)
 	}
-	archive, err := pfs.NewFile(path)
-	if err != nil {
-		return fmt.Errorf("eqg load: %w", err)
-	}
-	defer archive.Close()
 
 	maxWidth := 3.0
 	riggedMeshes := make([]*graphic.RiggedMesh, 0)
 	for i := 0; i < len(q.Models); i++ {
 		var meshInstance core.INode
 		model := q.Models[i]
-		mesh, err := mesh.Generate(archive, model)
+		mesh, err := mesh.Generate(model)
 		if err != nil {
 			return fmt.Errorf("generate: %w", err)
 		}

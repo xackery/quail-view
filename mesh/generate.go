@@ -13,7 +13,6 @@ import (
 	"github.com/sergeymakinen/go-bmp"
 	"github.com/xackery/colors"
 	"github.com/xackery/engine/texture"
-	"github.com/xackery/quail/pfs"
 
 	"github.com/xackery/quail/common"
 
@@ -28,7 +27,7 @@ var (
 	fallbackImg *image.RGBA
 )
 
-func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
+func Generate(in *common.Model) (*graphic.Mesh, error) {
 	mats := make(map[string]*material.Standard)
 	matIndexes := make(map[string]int)
 
@@ -50,15 +49,8 @@ func Generate(archive *pfs.PFS, in *common.Model) (*graphic.Mesh, error) {
 			if !strings.Contains(strings.ToLower(property.Name), "texture") {
 				continue
 			}
-			//fmt.Println("texture:", property.Value)
-			data, err := archive.File(property.Value)
-			if err != nil {
-				fmt.Println("Failed to load texture:", property.Value, err)
-				continue
-				//return nil, fmt.Errorf("file %s: %w", property.Value, err)
-			}
 
-			img, err := generateImage(property.Value, data)
+			img, err := generateImage(property.Value, property.Data)
 			if err != nil {
 				return nil, fmt.Errorf("generate image: %w", err)
 			}

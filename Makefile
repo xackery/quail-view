@@ -14,8 +14,8 @@ run:
 	#go run . ../eq/it13968.eqg
 	#go run . ../eq/luc.eqg
 	#go run . ../eq/crushbone.s3d
-	#go run . ../eq/gequip5.s3d
-	go run . ../eq/wrm.eqg
+	go run . ../eq/gequip5.s3d
+	#go run . ../eq/wrm.eqg
 	#go run . ../eq/steamfontmts.eqg
 	#go run . ../eq/global5_chr.s3d
 
