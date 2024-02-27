@@ -1,23 +1,28 @@
 NAME := quail-view
-BUILD_VERSION ?= 0.0.1
+BUILD_VERSION ?= 0.0.2
+
+SHELL := /bin/bash
 
 # build program for local OS and windows
 build:
 	@echo "build: building to bin/${NAME}..."
 	go build -o bin/${NAME} main.go
-	-mv main bin/${NAME}
 
 # run program
 run:
 	@echo "run: running..."
-	#go run main.go ../eq/dbx.eqg
-	#go run . ../eq/it13968.eqg
-	#go run . ../eq/luc.eqg
-	#go run . ../eq/crushbone.s3d
-	go run . ../eq/gequip5.s3d
-	#go run . ../eq/wrm.eqg
-	#go run . ../eq/steamfontmts.eqg
-	#go run . ../eq/global5_chr.s3d
+	#source .env && go run main.go $$EQ_PATH/dbx.eqg
+	#source .env && go run . $$EQ_PATH/it13968.eqg
+	#source .env && go run . $$EQ_PATH/luc.eqg
+	#source .env && go run . $$EQ_PATH/crushbone.s3d
+	source .env && go run . $$EQ_PATH/gequip5.s3d
+	#source .env && go run . $$EQ_PATH/wrm.eqg
+	#source .env && go run . $$EQ_PATH/steamfontmts.eqg
+	#source .env && go run . $$EQ_PATH/global5_chr.s3d
+
+view-%:
+	@echo "view-$*: running..."
+	source .env && go run . $$EQ_PATH/$*
 
 # bundle program with windows icon
 bundle:

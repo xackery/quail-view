@@ -78,20 +78,16 @@ func run() error {
 	onResize("", nil)
 
 	var err error
-	q := quail.New()
-	switch filepath.Ext(path) {
-	case ".s3d":
-		err = q.S3DImport(path)
-	case ".eqg":
-		err = q.EQGImport(path)
-	}
 
+	q := &quail.Quail{}
+	err = q.PfsRead(path)
 	if err != nil {
-		return fmt.Errorf("eqg import: %w", err)
+		return fmt.Errorf("pfs read: %w", err)
 	}
 
 	maxWidth := 3.0
 	riggedMeshes := make([]*graphic.RiggedMesh, 0)
+
 	for i := 0; i < len(q.Models); i++ {
 		var meshInstance core.INode
 		model := q.Models[i]
