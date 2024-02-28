@@ -10,6 +10,7 @@ jobs:
       - run: make set-version-${{github.run_number}}
       - run: sudo apt install xorg-dev libgl1-mesa-dev libopenal1 libopenal-dev libvorbis0a libvorbis-dev libvorbisfile3
       - run: go get ./...
+      - run: cd .. && git clone github.com/xackery/quail
       - run: make build-windows
       - uses: "marvinpinto/action-automatic-releases@latest"
         if: github.ref == 'refs/heads/main'

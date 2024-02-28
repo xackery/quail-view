@@ -99,6 +99,10 @@ func Generate(in *common.Model) (*graphic.Mesh, error) {
 }
 
 func generateImage(name string, data []byte) (*image.RGBA, error) {
+	if len(data) == 0 {
+		fmt.Println("empty texture", name, "fallback pink image")
+		return fallback(), nil
+	}
 
 	if string(data[0:3]) == "DDS" {
 		// change to png, blender doesn't like EQ dds
