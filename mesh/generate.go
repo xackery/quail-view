@@ -15,6 +15,7 @@ import (
 	"github.com/xackery/engine/texture"
 
 	"github.com/xackery/quail/common"
+	"github.com/xackery/quail/quail"
 
 	"github.com/xackery/engine/geometry"
 	"github.com/xackery/engine/gls"
@@ -27,7 +28,7 @@ var (
 	fallbackImg *image.RGBA
 )
 
-func Generate(in *common.Model) (*graphic.Mesh, error) {
+func Generate(q *quail.Quail, in *common.Model) (*graphic.Mesh, error) {
 	mats := make(map[string]*material.Standard)
 	matIndexes := make(map[string]int)
 
@@ -49,8 +50,17 @@ func Generate(in *common.Model) (*graphic.Mesh, error) {
 			if !strings.Contains(strings.ToLower(property.Name), "texture") {
 				continue
 			}
+			data := property.Data
+			if len(data) == 0 {
+				for name, textureData := range q.Textures {
+					if strings.EqualFold(name, property.Value) {
+						data = textureData
+						break
+					}
+				}
+			}
 
-			img, err := generateImage(property.Value, property.Data)
+			img, err := generateImage(property.Value, data)
 			if err != nil {
 				return nil, fmt.Errorf("generate image: %w", err)
 			}

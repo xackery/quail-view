@@ -28,7 +28,7 @@ func TestMesh(t *testing.T) {
 	for i := 0; i < len(q.Models); i++ {
 		var meshInstance core.INode
 		model := q.Models[i]
-		mesh, err := Generate(model)
+		mesh, err := Generate(q, model)
 		if err != nil {
 			t.Fatalf("generate: %s", err.Error())
 		}

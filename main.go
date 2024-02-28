@@ -91,7 +91,7 @@ func run() error {
 	for i := 0; i < len(q.Models); i++ {
 		var meshInstance core.INode
 		model := q.Models[i]
-		mesh, err := mesh.Generate(model)
+		mesh, err := mesh.Generate(q, model)
 		if err != nil {
 			return fmt.Errorf("generate: %w", err)
 		}
