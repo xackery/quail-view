@@ -56,6 +56,10 @@ build-windows:
 	@mkdir -p bin
 	@CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}.exe main.go
 
+build-windows-cross:
+	@echo "build-windows-cross: ${BUILD_VERSION}"
+	@mkdir -p bin
+	@CC=x86_64-w64-mingw32-gcc CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}.exe main.go
 # run pprof and dump 4 snapshots of heap
 profile-heap:
 	@echo "profile-heap: running pprof watcher for 2 minutes with snapshots 0 to 3..."
@@ -96,3 +100,11 @@ sanitize:
 set-version-%:
 	@echo "VERSION=${BUILD_VERSION}.$*" >> $$GITHUB_ENV
 	@export BUILD_VERSION=${BUILD_VERSION}.$*
+
+docker-build:
+	@echo "docker-build: building docker image..."
+	docker build -t ${NAME} .
+
+docker-run:
+	@echo "docker-run: running docker image..."
+	docker run --rm -v ${PWD}/../:/src -w /src -it ${NAME} bash -c 'cd quail-view && make build-windows-cross'
