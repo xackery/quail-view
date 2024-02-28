@@ -11,7 +11,7 @@ jobs:
       - run: sudo apt install xorg-dev libgl1-mesa-dev libopenal1 libopenal-dev libvorbis0a libvorbis-dev libvorbisfile3 gcc-mingw-w64
       - run: cd ../ && git clone https://github.com/xackery/quail
       - run: go get ./...
-      - run: make build-linux && mv bin/quail-view bin/quail-view-linux
+      - run: make build-linux
       - run: make build-windows-cross
       - uses: "marvinpinto/action-automatic-releases@latest"
         if: github.ref == 'refs/heads/main'
