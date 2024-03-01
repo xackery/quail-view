@@ -150,7 +150,6 @@ func generateImage(name string, data []byte) (*image.RGBA, error) {
 	}
 
 	if filepath.Ext(strings.ToLower(name)) == ".bmp" {
-
 		img, err := bmp.Decode(bytes.NewReader(data))
 		if err != nil {
 			fmt.Println("Failed to decode bmp:", name, err, "fallback pink image")
@@ -162,8 +161,22 @@ func generateImage(name string, data []byte) (*image.RGBA, error) {
 		case *image.NRGBA:
 			return image.NewRGBA(rgba.Rect), nil
 		default:
-			fmt.Println("Failed dds type", rgba, "fallback pink image")
-			return fallback(), nil
+			img, err := dds.Decode(bytes.NewReader(data))
+			if err != nil {
+				fmt.Println("Failed to decode dds:", name, err, "fallback pink image")
+				return fallback(), nil
+			}
+			switch rgba := img.(type) {
+			case *image.RGBA:
+				return rgba, nil
+			case *image.NRGBA:
+				newImg := image.NewRGBA(rgba.Rect)
+				draw.Draw(newImg, newImg.Bounds(), rgba, rgba.Rect.Min, draw.Src)
+				return newImg, nil
+			default:
+				fmt.Println("Failed dds type", name, "fallback pink image")
+				return fallback(), nil
+			}
 		}
 	}
 	return nil, fmt.Errorf("unknown image type %s", name)

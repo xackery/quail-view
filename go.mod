@@ -6,7 +6,7 @@ require (
 	github.com/malashin/dds v0.0.0-20190511100755-ab62708f5fe5
 	github.com/sergeymakinen/go-bmp v1.0.0-beta.1
 	github.com/xackery/colors v1.0.1
-	github.com/xackery/engine v0.3.3
+	github.com/xackery/engine v0.3.4
 	github.com/xackery/quail v0.0.0-20231020171610-4bdfa0acbd4f
 )
 

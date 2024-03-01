@@ -6,12 +6,12 @@ SHELL := /bin/bash
 # build program for local OS and windows
 build:
 	@echo "build: building to bin/${NAME}..."
-	go build -o bin/${NAME} main.go
+	go build -o bin/${NAME} .
 
 # run program
 run:
 	@echo "run: running..."
-	#source .env && go run main.go $$EQ_PATH/dbx.eqg
+	#source .env && go run . $$EQ_PATH/dbx.eqg
 	#source .env && go run . $$EQ_PATH/it13968.eqg
 	#source .env && go run . $$EQ_PATH/luc.eqg
 	#source .env && go run . $$EQ_PATH/crushbone.s3d
@@ -44,22 +44,22 @@ build-all: build-darwin build-windows build-linux build-windows-addon
 build-darwin:
 	@echo "build-darwin: ${BUILD_VERSION}"
 	@mkdir -p bin
-	@CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}-darwin main.go
+	@CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}-darwin .
 
 build-linux:
 	@echo "build-linux: ${BUILD_VERSION}"
 	@mkdir -p bin
-	@CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}-linux main.go
+	@CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}-linux .
 
 build-windows:
 	@echo "build-windows: ${BUILD_VERSION}"
 	@mkdir -p bin
-	@CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}.exe main.go
+	@CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}.exe .
 
 build-windows-cross:
 	@echo "build-windows-cross: ${BUILD_VERSION}"
 	@mkdir -p bin
-	@CC=x86_64-w64-mingw32-gcc CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}.exe main.go
+	@CC=x86_64-w64-mingw32-gcc CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -trimpath -buildmode=pie -ldflags="-X main.Version=${BUILD_VERSION} -s -w" -o bin/${NAME}.exe .
 # run pprof and dump 4 snapshots of heap
 profile-heap:
 	@echo "profile-heap: running pprof watcher for 2 minutes with snapshots 0 to 3..."
