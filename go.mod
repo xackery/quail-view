@@ -13,8 +13,9 @@ require (
 require (
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20221017161538-93cebf72946b // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
-	github.com/kr/pretty v0.3.1 // indirect
-	github.com/xackery/encdec v0.0.8 // indirect
+	github.com/kr/text v0.2.0 // indirect
+	github.com/rogpeppe/go-internal v1.9.0 // indirect
+	github.com/xackery/encdec v0.1.11 // indirect
 	golang.org/x/image v0.13.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

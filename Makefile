@@ -14,8 +14,8 @@ run:
 	#source .env && go run . $$EQ_PATH/dbx.eqg
 	#source .env && go run . $$EQ_PATH/it13968.eqg
 	#source .env && go run . $$EQ_PATH/luc.eqg
-	#source .env && go run . $$EQ_PATH/crushbone.s3d
-	source .env && go run . $$EQ_PATH/gequip5.s3d
+	source .env && go run . $$EQ_PATH/crushbone.s3d
+	#source .env && go run . $$EQ_PATH/gequip5.s3d
 	#source .env && go run . $$EQ_PATH/wrm.eqg
 	#source .env && go run . $$EQ_PATH/steamfontmts.eqg
 	#source .env && go run . $$EQ_PATH/global5_chr.s3d
